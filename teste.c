@@ -1,18 +1,23 @@
-%%writefile programa.c
 #include <stdio.h>
 #include <stdlib.h>
 
 #define QUANTUM_FILA1 30
 #define QUANTUM_FILA2 30
 
+typedef enum {
+    PRONTO,
+    EXECUTANDO,
+    BLOQUEADO
+} Status;
+
 typedef struct PCB{
-  //int PPID;
+  int PPID;
   int PID;
   int prioridade;
   float tempo_servico;
   float tempo_execucao;
   float tempo_sistema;
-  int []v = [-1, 0, 1]; //-1 bloqueado, 0 pronto, 1 em CPU
+  Status status;
 } PCB;
 
 //fila de processos prontos
@@ -57,16 +62,16 @@ no_fila1* insere (no_fila1 *p, PCB *processo){
 }
 
 void CPU(no_fila1 *P, no_fila1 *fim_1, no_fila1 *inicio_1){
-p->processos.v = 0;
+P->processos.status = EXECUTANDO;
 while(P->quantum > 0){
   P->quantum --;
   P->processos.tempo_execucao ++;
-  P->processos.tempo_execucao ++;
+  P->processos.tempo_sistema ++;
 }
 
 if(P->quantum == 0){
-    p->quantum = QUANTUM_FILA2;
-  p->processos.v = 0;
+  P->quantum = QUANTUM_FILA2;
+  P->processos.status = EXECUTANDO;
   printf("final do tempo de CPU");
   inicio_1->prox = P->prox;
   P->prox = fim_1; //alterar aqui
@@ -74,7 +79,7 @@ if(P->quantum == 0){
 }
 }
 
-void processos_prontos(no_fila_prontos *pronto_inicio no_fila_prontos *pronto_final){
+void processos_prontos(no_fila_prontos* pronto_inicio, no_fila_prontos* pronto_final){
     //processo 1
     PCB *processo_1;
     processo_1 = (PCB *) malloc (sizeof(PCB));
@@ -83,7 +88,7 @@ void processos_prontos(no_fila_prontos *pronto_inicio no_fila_prontos *pronto_fi
     processo_1->tempo_servico = 0;
     processo_1->tempo_execucao = 0;
     processo_1->tempo_sistema = 0;
-    processo_1->v = 0;
+    processo_1->status = PRONTO;
 
     //processo 2
     PCB *processo_2;
@@ -93,20 +98,20 @@ void processos_prontos(no_fila_prontos *pronto_inicio no_fila_prontos *pronto_fi
     processo_2->tempo_servico = 0;
     processo_2->tempo_execucao = 0;
     processo_2->tempo_sistema = 0;
-    processo_2->v = 0;
+    processo_2->status = PRONTO;
 
     //processo 3
-    PCB *processo_2;
-    processo_2 = (PCB *) malloc (sizeof(PCB));
-    processo_2->PID = 2003;
-    processo_2->prioridade = 1;
-    processo_2->tempo_servico = 0;
-    processo_2->tempo_execucao = 0;
-    processo_2->tempo_sistema = 0;
-    processo_2->v = 0;
+    PCB *processo_3;
+    processo_3 = (PCB *) malloc (sizeof(PCB));
+    processo_3->PID = 2003;
+    processo_3->prioridade = 1;
+    processo_3->tempo_servico = 0;
+    processo_3->tempo_execucao = 0;
+    processo_3->tempo_sistema = 0;
+    processo_3->status = PRONTO;
 
-    processos_prontos *processo_no_3
-    processo_no_3 = (processos_prontos *) malloc (sizeof(processos_prontos));
+    no_fila1 *processo_no_3;
+    processo_no_3 = (no_fila1 *) malloc (sizeof(no_fila1));
     processo_no_3->processos = *processo_3;
     processo_no_3->prox = NULL
 
